@@ -568,22 +568,18 @@ void ReadSwitches()
 {
   //Read the Go Switch first to see if we need to go through the Fire sequence
   LaunchButtonValue = analogRead(LaunchButton);
-  if(LaunchButtonValue > 500  && memValue == 0)
+  if(LaunchButtonValue > 500)
   {
     // Run the Fire Sequence
     FireSequence();
-    memValue = 1;
-  }
-  if(LaunchButtonValue <= 500)
-  {
-    memValue = 0;
   }
 
-  ValveFlushSwitchValue = analogRead(ValveFlushSwitch);
-  if(ValveFlushSwitchValue > 500)
-  {
-    valveFlush();
-  }
+//TODO: Ik denk dat het hier misgaat met valve testing
+  // ValveFlushSwitchValue = analogRead(ValveFlushSwitch);
+  // if(ValveFlushSwitchValue > 500)
+  // {
+  //   valveFlush();
+  // }
 
 
   //Next we read the Lightning Switch to see if we need to be in Lightning Mode
@@ -688,7 +684,7 @@ void UpdateMode()
       Serial.write("A");
       digitalWrite(ValveATrigger, HIGH);
     }else{
-      Serial.write("<");
+      Serial.write("a");
       digitalWrite(ValveATrigger, LOW);
     }
     if(MultiFlashValue > 500)
@@ -696,6 +692,7 @@ void UpdateMode()
       Serial.write("B");
       digitalWrite(ValveBTrigger, HIGH);
     }else{
+      Serial.write("b");
       digitalWrite(ValveBTrigger, LOW);
     }
     if(ValveFlushSwitchValue > 500)
@@ -703,6 +700,7 @@ void UpdateMode()
       Serial.write("C");
       digitalWrite(ValveCTrigger, HIGH);
     }else{
+      Serial.write("c");
       digitalWrite(ValveCTrigger, LOW);
     }
     
@@ -710,7 +708,6 @@ void UpdateMode()
     EnterValue = analogRead(EnterButton);
     if(EnterValue > 500)
     {
-      valveOut();
       lcd.clear();
       lcd.print("Saving Values");
       lcd.setCursor(0,1);
