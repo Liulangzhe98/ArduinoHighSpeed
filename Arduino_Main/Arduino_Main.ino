@@ -1,7 +1,7 @@
 /*
    Author: Thijs van Herwijnen en Céline Vos
    Date Created: 22 Oktober 2016
-   Last Modification: 24 Oktober 2016
+   Last Modification: 11 November 2016
    Version: 1.0
   
    Description:  This Arduino Script was written for a High Speed Photography setup using
@@ -63,9 +63,10 @@ int LightningSwitch = A14;
 int LightningValue = 0;
 int LightningDetect = A11;
 int LightningDetectValue = 0;
-int ValveFlushSwitch = A11;
+int ValveFlushSwitch = A12;
 int ValveFlushSwitchValue = 0;
 
+//TODO: Moeten nog veranderd worden volgens mij.
 int ShutterTrigger = 23;
 int FlashTrigger = 25;
 
@@ -77,7 +78,6 @@ int ValveDTrigger = 44;
 // Set Global Variables
 int RunOnce = 0;
 int DisplayDelay = 3000;
-int memValue = 0;
 
 // Create arrays to hold Variable Descriptions and Values
 const char* DescArray[] = {"Flash Delay", "Drop Delay", "Drop Size", "Initial Delay", "Shutter Delay", "MutiFlash", "MultiFlash Delay", "# of Drops", "Valve A Active", "Valve B Active", "Valve C Active", "Valve D Active", "Valve Delay AB", "Valve Delay BC", "Valve Delay CD","PreFlash Trigger","Sound Threshold","Current Sound","Lightning Threshold","Current Light","IV Start Delay","IV Shutter Speed","IV Interval Secs","IV Intrval MSecs","IV Repetitions", "hutseflutsDelay"};
@@ -615,7 +615,10 @@ void ReadSwitches()
     delay(3000);
 
     UpdateMode();
+  }else{
+    valveOut();
   }
+
 }
 
 
@@ -717,6 +720,7 @@ void UpdateMode()
       lcd.clear();
       lcd.print("Values Saved!");
       delay(DisplayDelay);
+      valveOut();
     }
 
     //Read the UpSwitch to see if is pressed to move up to the next Variable
