@@ -1,7 +1,7 @@
 // Libraries 
 #include <LiquidCrystal.h>
 #include <LCDKeypad.h>
-
+//Controls
 int LeftButton = A1;
 int LeftValue = 0;
 int RightButton = A2;
@@ -12,6 +12,8 @@ int UpButton = A4;
 int UpValue = 0;
 int EnterButton = A5;
 int EnterValue = 0;
+
+//Real switches
 int LaunchButton = A6;
 int LaunchButtonValue = 0;
 int UpdateSwitch = A7;
@@ -37,28 +39,70 @@ int ValveFlushSwitchValue = 0;
 int incomingByte = 0;   
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
+
+  //Labels for continous testing.
+  Serial.println("US: \t MFS: \t DS: \t IVS: \t LS: \t VFS:");	
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    if(Serial.read() = 93){
-      Serial.print("LaunchButton: ");
-      Serial.println(analogRead(LaunchButton));
-      Serial.print("UpdateSwitch: ");
-      Serial.println(analogRead(UpdateSwitch));
-      Serial.print("MultiFlashSwitch: ");
-      Serial.println(analogRead(MultiFlashSwitch));
-      Serial.print("DetectorSwitch: ");
-      Serial.println(analogRead(DetectorSwitch));
-      Serial.print("IVSwitch: ");
-      Serial.println(analogRead(IVSwitch));  
-      Serial.print("LightningSwitch: ");
-      Serial.println(analogRead(LightningSwitch));
-      Serial.print("ValveFlushSwitch: ");
-      Serial.println(analogRead(ValveFlushSwitch));
-      Serial.println("");
-    }
-  }
+//Code block for testing continous and for getting data for in a spreadsheet.
+    Serial.print(analogRead(UpdateSwitch));
+    Serial.print("\t");
+    Serial.print(analogRead(MultiFlashSwitch));
+    Serial.print("\t");
+    Serial.print(analogRead(DetectorSwitch));
+    Serial.print("\t");
+    Serial.print(analogRead(IVSwitch));  
+    Serial.print("\t");
+    Serial.print(analogRead(LightningSwitch));
+    Serial.print("\t");
+    Serial.println(analogRead(ValveFlushSwitch));
+    Serial.println("");	
+
+
+
+
+
+  delay(200);
+
+
+
+//Code block for testing when ] key is pressed.
+//  if (Serial.available() > 0) {
+//    incomingByte = Serial.read();
+//    if(incomingByte == 93) {  //93 = ]
+//      Serial.println("Switch Test: ");
+//      Serial.println("LCD Control: ");
+//
+//      Serial.print("\t LeftButton: ");
+//      Serial.println(analogRead(LeftButton));
+//      Serial.print("\t RightButton: ");
+//      Serial.println(analogRead(RightButton));
+//      Serial.print("\t DownButton: ");
+//      Serial.println(analogRead(DownButton));
+//      Serial.print("\t UpButton: ");
+//      Serial.println(analogRead(UpButton));
+//      Serial.print("\t EnterButton: ");
+//      Serial.println(analogRead(EnterButton));
+//
+//
+//      Serial.println("\"real switches\"");
+//      Serial.print("\t LaunchButton: ");
+//      Serial.println(analogRead(LaunchButton));
+//      Serial.print("\t UpdateSwitch: ");
+//      Serial.println(analogRead(UpdateSwitch));
+//      Serial.print("\t MultiFlashSwitch: ");
+//      Serial.println(analogRead(MultiFlashSwitch));
+//      Serial.print("\t DetectorSwitch: ");
+//      Serial.println(analogRead(DetectorSwitch));
+//      Serial.print("\t IVSwitch: ");
+//      Serial.println(analogRead(IVSwitch));  
+//      Serial.print("\t LightningSwitch: ");
+//      Serial.println(analogRead(LightningSwitch));
+//      Serial.print("\t ValveFlushSwitch: ");
+//      Serial.println(analogRead(ValveFlushSwitch));
+//      Serial.println("");
+//    }
+//  }
 }
