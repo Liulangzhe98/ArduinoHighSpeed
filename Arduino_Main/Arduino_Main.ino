@@ -1,31 +1,17 @@
 /*
    Author: Thijs van Herwijnen en Céline Vos
    Date Created: 22 Oktober 2016
-   Last Modification: 11 November 2016
+   Last Modification: 12 November 2016
    Version: 1.0
-  
-   Description:  This Arduino Script was written for a High Speed Photography setup using
-   an Arduino Mega, an LCDKeypadShield v2.0, and a minimal number of components used for 
-   Sound Triggers, IR Triggers, and switch position sensors.  The Keypad on the LCDKeypadShield
-   is not used since this project was mounted in a project box and the buttons ont he keypad are
-   not in a place where they are easily usable. So momentary push buttons were used for input on 
-   the device.
 
-   To change parameters while the device is running, flip the Arm/Update Switch to Update.  The first
-   parameter will be displayed. You can scroll through the parameters using the Up and Down buttons
-   and change the values by using the Left and Right Buttons.  When you have finished making updates,
-   flip the Arm/Update Switch back to Arm. To save the new values to memory so they will be there the
-   next time you turn the unit on, press the ENTER button to save the values while in update mode. 
-
-   Libraries used:
-   You will need the EXROM Extention Library for Arduino located at:
+   Bibliotheken gebruikt:
+   De EXROM Extention Library for Arduino te vinden op:
    http://code.google.com/p/arduino-exrom/downloads/list
-    * Deze bibliotheek gaf een fout aan. Dit pas optelossen door de code in de bibliotheek te veranderen. 
+    * Deze bibliotheek gaf een fout aan. Dit is optelossen door de code in de bibliotheek te veranderen. 
    
-   You will also need the LCDKeypad Library for the Arduino located at:
+   Ook heb je de LCDKeypad Library for the Arduino nodig, te vinden op:
    http://www.dfrobot.com/image/data/DFR0009/LCDKeypad.zip
-   The LiquidCrystal Library is also used and is a standard Library with the Arduino software.
- */
+*/
 
 // Libraries 
 #include <LiquidCrystal.h>
@@ -80,6 +66,7 @@ int RunOnce = 0;
 int DisplayDelay = 3000;
 
 // Create arrays to hold Variable Descriptions and Values
+//De lengte van de arrays worden hergebruikt, maar zijn HARD CODED dus moeten mee veranderd worden als je hier iets toevoegt.
 const char* DescArray[] = {"Flash Delay", "Drop Delay", "Drop Size", "Initial Delay", "Shutter Delay", "MutiFlash", "MultiFlash Delay", "# of Drops", "Valve A Active", "Valve B Active", "Valve C Active", "Valve D Active", "Valve Delay AB", "Valve Delay BC", "Valve Delay CD","PreFlash Trigger","Sound Threshold","Current Sound","Lightning Threshold","Current Light","IV Start Delay","IV Shutter Speed","IV Interval Secs","IV Intrval MSecs","IV Repetitions", "hutseflutsDelay"};
 float ValueArray[] = {245.0,20.0,85.0,5.0,0.0,1.0,100.0,2.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,200.0,0.0,200.0,0.0,0.0,0.0,1.0,0.0,0.0,200.0};
 const char* TypeArray[] = {"Millisecs","Millisecs","Millisecs","Second(s)","Second(s)","Pulses","Millisecs","Drops","0=Off","0=Off","0=Off","0=Off","Millisecs","Millisecs","Millisecs","0=Off","Dn= >Sens","Level","Dn= >Sens","Level","Seconds","Seconds","Seconds","Millisecs","0=Endless","Millisecs"};
@@ -243,7 +230,6 @@ void loop()
     }
     lcd.setCursor(0,1);
     lcd.print("READY TO FIRE!");
-    // Turn the Green Lamp "Ready" indicator on
     delay(50);
   }
 }
@@ -320,7 +306,6 @@ void FireFourValves()
 
 void IRSequence()
 {
-  // Turn the Green Lamp off and Yellow Lamp on to show that the process is running
   lcd.clear();
   lcd.print("Running...");
   lcd.setCursor(0,1);
@@ -342,15 +327,14 @@ void IRSequence()
   valveChooser();
 
   // Wait for the last drop from valve A to pass through the IR detector
-
-  //TODO: For the time being no IR Sensor.
+  //For the time being no IR Sensor.
       /*  IRValue = analogRead(IRDetect); 
         while(IRValue >= 50)
         {  
           IRValue = analogRead(IRDetect);
         }
       */
-  delay(ValueArray[25]);
+  delay(ValueArray[25]); // Delay Hutsefluts oftewel en valtijd van een druppel. Zie spreadsheet voor meer informatie.
 
 
   // Wait before firing the flash
@@ -445,9 +429,6 @@ void PeizoSequence()
       // Reset the FlashTrigger
       digitalWrite(FlashTrigger, LOW);
     }
-
-    valveChooser();
-
     // Close the Shutter
     digitalWrite(ShutterTrigger, LOW);
     delay(500);
@@ -549,7 +530,6 @@ void FireSequence()
   else
   {
     //See if we are in IR Trigger or Piezo Trigger Mode
-    //DetectorValue = analogRead(DetectorSwitch);
     if(DetectorValue > 300)
     {
       // We are in IR Trigger Mode
@@ -573,15 +553,6 @@ void ReadSwitches()
     // Run the Fire Sequence
     FireSequence();
   }
-
-//TODO: Ik denk dat het hier misgaat met valve testing
-  // ValveFlushSwitchValue = analogRead(ValveFlushSwitch);
-  // if(ValveFlushSwitchValue > 500)
-  // {
-  //   valveFlush();
-  // }
-
-
   //Next we read the Lightning Switch to see if we need to be in Lightning Mode
   LightningValue = analogRead(LightningSwitch);
 
@@ -729,7 +700,6 @@ void UpdateMode()
     {
       if(x <= 0)
       {
-        //TODO: SOFT CODE!!!
         x = 25;
       }
       else
@@ -742,7 +712,6 @@ void UpdateMode()
     DownValue = analogRead(DownButton);
     if(DownValue > 500)
     {
-      //TODO: SOFT CODE!!!
       if(x >= 25)
       {
         x = 0;
@@ -865,44 +834,6 @@ void UpdateMode()
     //Read the position of the Update/Arm switch to see if we are done
     UpdateValue = analogRead(UpdateSwitch);  
   }
-}
-
-
-
-void PlayIntro()
-{
-  lcd.begin(16, 2);
-  lcd.clear();
-  lcd.print("   PRECISION    ");
-  lcd.setCursor(0,1);
-  lcd.print("HIGH SPEED PHOTO");
-  delay(2000);
-  lcd.clear();
-  lcd.print("   PRECISION    ");
-  lcd.setCursor(0,1);
-  lcd.print("    TRIGGER");
-  delay(2000);
-  lcd.clear();
-  lcd.print("Custom Designed");
-  lcd.setCursor(0,1);
-  lcd.print("by Michael Ross");
-  delay(2000);
-  lcd.clear();
-  lcd.print("Michael Ross   ");
-  lcd.setCursor(0,1);
-  lcd.print("MRossPhoto.com ");
-  delay(2000);
-  lcd.clear();
-  lcd.print("    Version    ");
-  lcd.setCursor(0,1);
-  lcd.print("      2.3      ");
-  delay(2000);
-  lcd.clear();
-  lcd.print("Initializing...");
-  lcd.setCursor(0,1);
-  lcd.print("Stand By... ");
-  delay(2000);
-
 }
 
 void PlayIntroCenT()

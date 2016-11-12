@@ -1,6 +1,7 @@
 // Libraries 
 #include <LiquidCrystal.h>
 #include <LCDKeypad.h>
+
 //Controls
 int LeftButton = A1;
 int LeftValue = 0;
@@ -35,7 +36,7 @@ int LightningDetectValue = 0;
 int ValveFlushSwitch = A12;
 int ValveFlushSwitchValue = 0;
 
-
+//Nodig om serial inputs te lezen.
 int incomingByte = 0;   
 
 void setup() {
@@ -59,13 +60,7 @@ void loop() {
     Serial.print("\t");
     Serial.println(analogRead(ValveFlushSwitch));
     Serial.println("");	
-
-
-
-
-
-  delay(200);
-
+ 	delay(200);
 
 
 //Code block for testing when ] key is pressed.
