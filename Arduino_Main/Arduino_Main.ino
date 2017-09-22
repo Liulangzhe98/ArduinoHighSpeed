@@ -20,7 +20,8 @@
    Libraries used:
    You will need the EXROM Extention Library for Arduino located at:
    http://code.google.com/p/arduino-exrom/downloads/list
-    * Deze bibliotheek gaf een fout aan. Dit pas optelossen door de code in de bibliotheek te veranderen. 
+    * Deze bibliotheek gaf een fout aan. Dit is optelossen door de code in de bibliotheek te veranderen. 
+    * Verander "#include "WProgram.h" naar "Arduino.h" in alle bestanden van EXROM
    
    You will also need the LCDKeypad Library for the Arduino located at:
    http://www.dfrobot.com/image/data/DFR0009/LCDKeypad.zip
@@ -191,15 +192,7 @@ void setup()
   
   // Read the Paramters from saved memory and update the default
   // Array values with those retrieved from memory
-  EXROM.read(0, array2, sizeof(array2));
-  if(array2[0] > 0)
-  {
-    //TODO: SOFT CODE!!!!
-    for (int i = 0; i < 25; i++)
-    {
-      ValueArray[i] = array2[i];
-    }  
-  }
+  ReadExrom();
   Serial.begin(9600);
 }
 
@@ -721,6 +714,7 @@ void UpdateMode()
       lcd.print("Values Saved!");
       delay(DisplayDelay);
       valveOut();
+      ReadExrom();
     }
 
     //Read the UpSwitch to see if is pressed to move up to the next Variable
@@ -915,6 +909,18 @@ void PlayIntroCenT()
   lcd.clear();
   lcd.print(namen);
   delay(2000);
+}
+
+void ReadExrom(){
+  EXROM.read(0, array2, sizeof(array2));
+  if(array2[0] > 0)
+  {
+    //TODO: SOFT CODE!!!!
+    for (int i = 0; i < 25; i++)
+    {
+      ValueArray[i] = array2[i];
+    }  
+  }
 }
 
 void valveChooser()
