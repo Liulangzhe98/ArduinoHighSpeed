@@ -8,10 +8,6 @@
    De EXROM Extention Library for Arduino te vinden op:
    http://code.google.com/p/arduino-exrom/downloads/list
     * Deze bibliotheek gaf een fout aan. Dit is optelossen door de code in de bibliotheek te veranderen. 
-<<<<<<< HEAD
-=======
-    * Verander "#include "WProgram.h" naar "Arduino.h" in alle bestanden van EXROM
->>>>>>> origin/master
    
    Ook heb je de LCDKeypad Library for the Arduino nodig, te vinden op:
    http://www.dfrobot.com/image/data/DFR0009/LCDKeypad.zip
@@ -149,7 +145,7 @@ byte raree[8] = {
 
 void setup()
 {
-  PlayIntroCenT();
+  PlayIntro();
 
   // Set the rest of the Pin Modes for the Arduino
   pinMode(IRDetect, INPUT); 
@@ -180,11 +176,6 @@ void setup()
   
   delay(5000);
   
-<<<<<<< HEAD
-=======
-  // Read the Paramters from saved memory and update the default
-  // Array values with those retrieved from memory
->>>>>>> origin/master
   ReadExrom();
   Serial.begin(9600);
 }
@@ -838,28 +829,13 @@ void UpdateMode()
   }
 }
 
-void PlayIntroCenT()
-{  
-  String namen = "C";
-  namen.concat((char)5);
-  namen.concat("line en Thijs");
-  
-  lcd.begin(16, 2);
-  lcd.clear();
-  lcd.print(namen);
-  delay(2000);
-}
-
-void ReadExrom(){
-  EXROM.read(0, array2, sizeof(array2));
-  if(array2[0] > 0)
-  {
-    //TODO: SOFT CODE!!!!
-    for (int i = 0; i < 25; i++)
-    {
-      ValueArray[i] = array2[i];
-    }  
-  }
+void PlayIntro()
+{   
+   lcd.begin(16, 2);
+   lcd.clear();
+   lcd.print("   PRECISION    ");
+   lcd.setCursor(0,1);
+   lcd.print("HIGH SPEED PHOTO");
 }
 
 void valveChooser()
