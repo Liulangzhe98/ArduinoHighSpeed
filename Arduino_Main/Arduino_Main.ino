@@ -43,6 +43,7 @@ int PeizoDetect = A10;
 int PeizoValue = 0;
 int DetectorSwitch = A15;
 int DetectorValue = 0;
+int DetectorValueOld = 0;
 int IVSwitch = A13;
 int IVValue = 0;
 int LightningSwitch = A14;
@@ -52,9 +53,8 @@ int LightningDetectValue = 0;
 int ValveFlushSwitch = A12;
 int ValveFlushSwitchValue = 0;
 
-//TODO: Moeten nog veranderd worden volgens mij.
-int ShutterTrigger = 23;
-int FlashTrigger = 25;
+int ShutterTrigger = 22;
+int FlashTrigger = 24;
 
 int ValveATrigger = 38;
 int ValveBTrigger = 40;
@@ -176,17 +176,7 @@ void setup()
   
   delay(5000);
   
-  // Read the Paramters from saved memory and update the default
-  // Array values with those retrieved from memory
-  EXROM.read(0, array2, sizeof(array2));
-  if(array2[0] > 0)
-  {
-    //TODO: SOFT CODE!!!!
-    for (int i = 0; i < 25; i++)
-    {
-      ValueArray[i] = array2[i];
-    }  
-  }
+  ReadExrom();
   Serial.begin(9600);
 }
 
@@ -546,6 +536,7 @@ void FireSequence()
 
 void ReadSwitches()
 {
+  Serial.println(millis());
   //Read the Go Switch first to see if we need to go through the Fire sequence
   LaunchButtonValue = analogRead(LaunchButton);
   if(LaunchButtonValue > 500)
@@ -561,6 +552,7 @@ void ReadSwitches()
 
   //Next we read the Sound/IR Mode Switch to see which mode we need to be in
   DetectorValue = analogRead(DetectorSwitch);
+
 
   //Next we read the Update/Arm Switch to see if we need to go into Update Mode
   UpdateValue = analogRead(UpdateSwitch);
@@ -692,6 +684,7 @@ void UpdateMode()
       lcd.print("Values Saved!");
       delay(DisplayDelay);
       valveOut();
+      ReadExrom();
     }
 
     //Read the UpSwitch to see if is pressed to move up to the next Variable
@@ -874,6 +867,18 @@ void valveChooser()
     {
       FireOneValve();
     }
+  }
+}
+
+void ReadExrom(){
+  EXROM.read(0, array2, sizeof(array2));
+  if(array2[0] > 0)
+  {
+    //TODO: SOFT CODE!!!!
+    for (int i = 0; i < 25; i++)
+    {
+      ValueArray[i] = array2[i];
+    }  
   }
 }
 
