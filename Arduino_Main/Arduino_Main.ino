@@ -64,6 +64,7 @@ int ValveDTrigger = 44;
 // Set Global Variables
 int RunOnce = 0;
 int DisplayDelay = 3000;
+int Array2Size = 0;
 
 // Create arrays to hold Variable Descriptions and Values
 //De lengte van de arrays worden hergebruikt, maar zijn HARD CODED dus moeten mee veranderd worden als je hier iets toevoegt.
@@ -145,6 +146,7 @@ byte raree[8] = {
 
 void setup()
 {
+  Array2Size = sizeof(array2);
   PlayIntro();
 
   // Set the rest of the Pin Modes for the Arduino
@@ -693,7 +695,7 @@ void UpdateMode()
     {
       if(x <= 0)
       {
-        x = 25;
+        x = Array2Size;
       }
       else
       {
@@ -705,7 +707,7 @@ void UpdateMode()
     DownValue = analogRead(DownButton);
     if(DownValue > 500)
     {
-      if(x >= 25)
+      if(x >= Array2Size)
       {
         x = 0;
       }
@@ -868,11 +870,13 @@ void valveChooser()
 }
 
 void ReadExrom(){
-  EXROM.read(0, array2, sizeof(array2));
+
+  
+  EXROM.read(0, array2, as);
   if(array2[0] > 0)
   {
-    //TODO: SOFT CODE!!!!
-    for (int i = 0; i < 25; i++)
+   
+    for (int i = 0; i < as; i++)
     {
       ValueArray[i] = array2[i];
     }  
