@@ -1,15 +1,13 @@
 /*
-   Author: Thijs van Herwijnen en Céline Vos
    Date Created: 22 Oktober 2016
-   Last Modification: 12 November 2016
-   Version: 1.0
+   Last Modification: 25 September 2017
+   Version: 2.0
 
-   Bibliotheken gebruikt:
-   De EXROM Extention Library for Arduino te vinden op:
+   Libraries used:
+   The EXROM Extention Library for Arduino:
    http://code.google.com/p/arduino-exrom/downloads/list
     * Deze bibliotheek gaf een fout aan. Dit is optelossen door de code in de bibliotheek te veranderen. 
    
-   Ook heb je de LCDKeypad Library for the Arduino nodig, te vinden op:
    http://www.dfrobot.com/image/data/DFR0009/LCDKeypad.zip
 */
 
@@ -67,16 +65,11 @@ int DisplayDelay = 3000;
 int Array2Size = 0;
 
 // Create arrays to hold Variable Descriptions and Values
-//De lengte van de arrays worden hergebruikt, maar zijn HARD CODED dus moeten mee veranderd worden als je hier iets toevoegt.
-const char* DescArray[] = {"Flash Delay", "Drop Delay", "Drop Size", "Initial Delay", "Shutter Delay", "MutiFlash", "MultiFlash Delay", "# of Drops", "Valve A Active", "Valve B Active", "Valve C Active", "Valve D Active", "Valve Delay AB", "Valve Delay BC", "Valve Delay CD","PreFlash Trigger","Sound Threshold","Current Sound","Lightning Threshold","Current Light","IV Start Delay","IV Shutter Speed","IV Interval Secs","IV Intrval MSecs","IV Repetitions", "hutseflutsDelay"};
-float ValueArray[] = {245.0,20.0,85.0,5.0,0.0,1.0,100.0,2.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,200.0,0.0,200.0,0.0,0.0,0.0,1.0,0.0,0.0,200.0};
 const char* TypeArray[] = {"Millisecs","Millisecs","Millisecs","Second(s)","Second(s)","Pulses","Millisecs","Drops","0=Off","0=Off","0=Off","0=Off","Millisecs","Millisecs","Millisecs","0=Off","Dn= >Sens","Level","Dn= >Sens","Level","Seconds","Seconds","Seconds","Millisecs","0=Endless","Millisecs"};
 float array2[sizeof(ValueArray)];
 char* tval;
 
 
-/* Hier kan je eigen characters maken.
- * Een handige site hiervoor is : 
  * https://omerk.github.io/lcdchargen/
  */
 byte darrow[8] = {
@@ -130,23 +123,9 @@ byte waterdrop[8] = {
   B01110
 };
 
-byte raree[8] = {
-  B00010,
-  B00100,
-  B01110,
-  B10001,
-  B11111,
-  B10000,
-  B01110,
-  B00000
-};
-
-
-
 
 void setup()
 {
-  Array2Size = sizeof(array2);
   PlayIntro();
 
   // Set the rest of the Pin Modes for the Arduino
@@ -165,21 +144,15 @@ void setup()
   digitalWrite(ValveCTrigger, LOW);
   digitalWrite(ValveDTrigger, LOW);
 
-/* .createChar zorgt ervoor dat je later je jezelf gemaakte characters kunt hergebruiken.
- * https://www.sparkfun.com/datasheets/LCD/HD44780.pdf pagina 17 is de tabel voor het lcd'tje wat wij gebruiken
- * Nummers die vrij zijn: 0 - 32 & 126 - 160 
  */
   lcd.createChar(0, darrow);
   lcd.createChar(1, uarrow);
   lcd.createChar(2, larrow);
   lcd.createChar(3, rarrow);
   lcd.createChar(4, waterdrop);
-  lcd.createChar(5, raree);
   
   delay(5000);
-  
   ReadExrom();
-  Serial.begin(9600);
 }
 
 
@@ -317,16 +290,6 @@ void IRSequence()
   delay(1000);
   
   valveChooser();
-
-  // Wait for the last drop from valve A to pass through the IR detector
-  //For the time being no IR Sensor.
-      /*  IRValue = analogRead(IRDetect); 
-        while(IRValue >= 50)
-        {  
-          IRValue = analogRead(IRDetect);
-        }
-      */
-  delay(ValueArray[25]); // Delay Hutsefluts oftewel en valtijd van een druppel. Zie spreadsheet voor meer informatie.
 
 
   // Wait before firing the flash
@@ -555,7 +518,6 @@ void ReadSwitches()
   //Next we read the Sound/IR Mode Switch to see which mode we need to be in
   DetectorValue = analogRead(DetectorSwitch);
 
-
   //Next we read the Update/Arm Switch to see if we need to go into Update Mode
   UpdateValue = analogRead(UpdateSwitch);
 
@@ -583,9 +545,7 @@ void ReadSwitches()
   }else{
     valveOut();
   }
-
 }
-
 
 void UpdateDisplay()
 {
@@ -604,7 +564,6 @@ void UpdateDisplay()
   }
 }
   
-
 void UpdateMode() 
 {
   int x = 0;
@@ -761,7 +720,6 @@ void UpdateMode()
         case 22:
         case 23:
         case 24:
-        case 25:
           ValueArray[x] += 1.0;
           break;
       }
@@ -815,7 +773,6 @@ void UpdateMode()
         case 22:
         case 23:
         case 24:
-        case 25:
           ValueArray[x] -= 1.0;
           break;
       }
@@ -869,14 +826,8 @@ void valveChooser()
   }
 }
 
-void ReadExrom(){
-
-  
-  EXROM.read(0, array2, as);
   if(array2[0] > 0)
   {
-   
-    for (int i = 0; i < as; i++)
     {
       ValueArray[i] = array2[i];
     }  
