@@ -1,4 +1,5 @@
 /*
+   Author: Thijs van Herwijnen
    Date Created: 22 Oktober 2016
    Last Modification: 25 September 2017
    Version: 2.0
@@ -6,8 +7,9 @@
    Libraries used:
    The EXROM Extention Library for Arduino:
    http://code.google.com/p/arduino-exrom/downloads/list
-    * Deze bibliotheek gaf een fout aan. Dit is optelossen door de code in de bibliotheek te veranderen. 
+    * This library gave an error. The solution was to change "#include "WProgram.h"" to "#include "Arduino.h"" in all the file of the EXROM files 
    
+   LCDKeypad Library for the Arduino:
    http://www.dfrobot.com/image/data/DFR0009/LCDKeypad.zip
 */
 
@@ -65,11 +67,15 @@ int DisplayDelay = 3000;
 int Array2Size = 0;
 
 // Create arrays to hold Variable Descriptions and Values
+const char* DescArray[] = {"Flash Delay", "Drop Delay", "Drop Size", "Initial Delay", "Shutter Delay", "MultiFlash", "MultiFlash Delay", "# of Drops", "Valve A Active", "Valve B Active", "Valve C Active", "Valve D Active", "Valve Delay AB", "Valve Delay BC", "Valve Delay CD","PreFlash Trigger","Sound Threshold","Current Sound","Lightning Threshold","Current Light","IV Start Delay","IV Shutter Speed","IV Interval Secs","IV Intrval MSecs","IV Repetitions", "Fall time"};
+float ValueArray[] = {5.0,20.0,85.0,5.0,0.0,1.0,100.0,2.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,200.0,0.0,200.0,0.0,0.0,0.0,1.0,0.0,0.0,200.0};
 const char* TypeArray[] = {"Millisecs","Millisecs","Millisecs","Second(s)","Second(s)","Pulses","Millisecs","Drops","0=Off","0=Off","0=Off","0=Off","Millisecs","Millisecs","Millisecs","0=Off","Dn= >Sens","Level","Dn= >Sens","Level","Seconds","Seconds","Seconds","Millisecs","0=Endless","Millisecs"};
 float array2[sizeof(ValueArray)];
 char* tval;
 
 
+/* Create here your own characters 
+ * Usefull site for this is: 
  * https://omerk.github.io/lcdchargen/
  */
 byte darrow[8] = {
@@ -126,6 +132,8 @@ byte waterdrop[8] = {
 
 void setup()
 {
+  Array2Size = sizeof(ValueArray)/sizeof(float);
+
   PlayIntro();
 
   // Set the rest of the Pin Modes for the Arduino
@@ -144,6 +152,9 @@ void setup()
   digitalWrite(ValveCTrigger, LOW);
   digitalWrite(ValveDTrigger, LOW);
 
+/* .createChar lets you create the characters and use them later in the project. 
+ * https://www.sparkfun.com/datasheets/LCD/HD44780.pdf Page 17 is the table for the LCD I used
+ * Numbers that are free to use: 0 - 32 & 126 - 160 
  */
   lcd.createChar(0, darrow);
   lcd.createChar(1, uarrow);
@@ -291,6 +302,7 @@ void IRSequence()
   
   valveChooser();
 
+  delay(ValueArray[25]); // Fall time of the waterdrop till the watersurface
 
   // Wait before firing the flash
   delay(ValueArray[0]);
@@ -722,6 +734,9 @@ void UpdateMode()
         case 24:
           ValueArray[x] += 1.0;
           break;
+        case 25:
+          ValueArray[x] += 10.0;
+          break;
       }
       if( ValueArray[x] >= 1000 )
       {
@@ -775,6 +790,9 @@ void UpdateMode()
         case 24:
           ValueArray[x] -= 1.0;
           break;
+        case 25:
+          ValueArray[x] -= 10.0;
+          break;
       }
       if( ValueArray[x] <= 0 )
       {
@@ -795,6 +813,7 @@ void PlayIntro()
    lcd.print("   PRECISION    ");
    lcd.setCursor(0,1);
    lcd.print("HIGH SPEED PHOTO");
+   delay(2000);
 }
 
 void valveChooser()
@@ -826,8 +845,12 @@ void valveChooser()
   }
 }
 
+void ReadExrom()
+{
+  EXROM.read(0, array2, sizeof(array2));
   if(array2[0] > 0)
   {
+    for (int i = 0; i < Array2Size; i++)
     {
       ValueArray[i] = array2[i];
     }  
